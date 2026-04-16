@@ -27,7 +27,8 @@
 // End of main function
 
 
-#include<iostream>
+#include <iostream>
+#include <fstream>
 #include <map>
 #include <array>
 #include <list>
@@ -41,8 +42,13 @@ map<string, array<list<string>, 3>> productionMap;
 const string TEST_STATION = "ASSEMBLY_STATION_01";
 
 void simulateProductionChanges(map<string, array<list<string>, 3>>& lineMap, int currentInterval);
+bool loadFile(); // NEW
 
 int main() {
+    srand(time(0));
+    cout << "--- Alpha Release ---" << endl;
+
+    loadFile(); 
 
     productionMap[TEST_STATION][0].push_back("INITIAL_PART_001");
 
@@ -58,9 +64,18 @@ int main() {
     return 0;
 }
 
-void simulateProductionChanges(map<string, array<list<string>, 3>>& lineMap, int currentInterval) {
-    srand(time(0));
+bool loadFile() {
+    ifstream file("parts_data.txt");
+    if (file) {
+        cout << "File opened successfully" << endl;
+        return true;
+    } else {
+        cout << "File not found" << endl;
+        return false;
+    }
+}
 
+void simulateProductionChanges(map<string, array<list<string>, 3>>& lineMap, int currentInterval) {
     for (auto& entry : lineMap) {
         string stationName = entry.first;
         auto& waiting = entry.second[0];
