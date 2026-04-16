@@ -42,6 +42,7 @@ map<string, array<list<string>, 3>> productionMap;
 
 void simulateProductionChanges(map<string, array<list<string>, 3>>& lineMap, int currentInterval);
 bool loadFile();
+void printSummary();
 
 int main() {
     srand(time(0));
@@ -55,6 +56,8 @@ int main() {
     for (int i = 1; i <= 25; i++) {
         simulateProductionChanges(productionMap, i);
     }
+
+    printSummary();
 
     cout << "\n--- Alpha Complete ---" << endl;
 
@@ -113,5 +116,21 @@ void simulateProductionChanges(map<string, array<list<string>, 3>>& lineMap, int
             logs.push_back(message);
             cout << message << endl;
         }
+    }
+}
+
+void printSummary() {
+    cout << "\n--- Final Summary ---" << endl;
+
+    for (auto& entry : productionMap) {
+        string stationName = entry.first;
+        auto& waiting = entry.second[0];
+        auto& completed = entry.second[1];
+        auto& logs = entry.second[2];
+
+        cout << stationName << ":" << endl;
+        cout << "  Waiting: " << waiting.size() << endl;
+        cout << "  Completed: " << completed.size() << endl;
+        cout << "  Logs: " << logs.size() << endl;
     }
 }

@@ -1,5 +1,5 @@
 Unit Testing Description:
-I will test the loadFile() function and the simulateProductionChanges() function. These functions read workstation and part data from a file and update the production system during each simulation interval.
+I will test the loadFile() function, the simulateProductionChanges() function, and the printSummary() function. These functions read workstation and part data from a file, update the production system during each simulation interval, and print the final state of the system.
 
 Test Objectives:
     Test if the file opens correctly.
@@ -9,6 +9,7 @@ Test Objectives:
     Test if parts move from waiting to completed.
     Test if new parts are added to the waiting list.
     Test if backlog warnings are added when the waiting list becomes too large.
+    Test if the final waiting, completed, and log counts are displayed for each station.
 
 Driver Program:
 #include <iostream>
@@ -23,6 +24,7 @@ map<string, array<list<string>, 3>> productionMap;
 
 bool loadFile();
 void simulateProductionChanges(map<string, array<list<string>, 3>>& lineMap, int currentInterval);
+void printSummary();
 
 int main() {
     bool result = loadFile();
@@ -37,6 +39,7 @@ int main() {
     }
 
     simulateProductionChanges(productionMap, 1);
+    printSummary();
 
     return 0;
 }
@@ -83,5 +86,14 @@ void simulateProductionChanges(map<string, array<list<string>, 3>>& lineMap, int
             logs.push_back(message);
             cout << message << endl;
         }
+    }
+}
+
+void printSummary() {
+    for (auto& entry : productionMap) {
+        cout << entry.first << endl;
+        cout << "Waiting: " << entry.second[0].size() << endl;
+        cout << "Completed: " << entry.second[1].size() << endl;
+        cout << "Logs: " << entry.second[2].size() << endl;
     }
 }
