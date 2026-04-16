@@ -110,6 +110,9 @@ void simulateProductionChanges(map<string, array<list<string>, 3>>& lineMap, int
             cout << stationName << ": added new part " << newPart << " to waiting." << endl;
         }
         else {
+            string message = "Interval " + to_string(currentInterval) +
+                             ": no production change at " + stationName;
+            logs.push_back(message);
             cout << stationName << ": no change this interval." << endl;
         }
 
