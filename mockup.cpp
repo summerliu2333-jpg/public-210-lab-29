@@ -46,12 +46,38 @@ int main() {
 
     productionMap[TEST_STATION][0].push_back("INITIAL_PART_001");
 
+    cout << "--- Initial State ---" << endl;
+    cout << "Added dummy part to " << TEST_STATION << endl << endl;
+
     for (int i = 1; i <= 25; i++) {
         simulateProductionChanges(productionMap, i);
     }
+
+    cout << "\n--- Mockup Complete ---" << endl;
 
     return 0;
 }
 
 void simulateProductionChanges(map<string, array<list<string>, 3>>& lineMap, int currentInterval) {
+    srand(time(0));
+
+    for (auto& entry : lineMap) {
+        string stationName = entry.first;
+        auto& waiting = entry.second[0];
+        auto& completed = entry.second[1];
+        auto& logs = entry.second[2];
+
+        bool remove = rand() % 2 == 0;
+
+        if (remove && !waiting.empty()) {
+            string part = waiting.front();
+            waiting.pop_front();
+            completed.push_back(part);
+            cout << "Interval " << currentInterval << ": Moved " << part << " to completed." << endl;
+        } else {
+            string newPart = "PART_" + to_string(rand() % 9999);
+            waiting.push_back(newPart);
+            cout << "Interval " << currentInterval << ": Added new part " << newPart << endl;
+        }
+    }
 }
