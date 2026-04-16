@@ -46,7 +46,7 @@ void printSummary();
 
 int main() {
     srand(time(0));
-    cout << "--- Alpha Release ---" << endl;
+    cout << "--- Beta Release ---" << endl;
 
     if (!loadFile()) {
         cerr << "Failed to load parts data." << endl;
@@ -59,7 +59,7 @@ int main() {
 
     printSummary();
 
-    cout << "\n--- Alpha Complete ---" << endl;
+    cout << "\n--- Beta Complete ---" << endl;
 
     return 0;
 }
@@ -96,18 +96,21 @@ void simulateProductionChanges(map<string, array<list<string>, 3>>& lineMap, int
         auto& completed = entry.second[1];
         auto& logs = entry.second[2];
 
-        bool remove = rand() % 2 == 0;
+        int action = rand() % 3;   // 0 = move, 1 = add, 2 = idle
 
-        if (remove && !waiting.empty()) {
+        if (action == 0 && !waiting.empty()) {
             string part = waiting.front();
             waiting.pop_front();
             completed.push_back(part);
             cout << stationName << ": moved " << part << " from waiting to completed." << endl;
         }
-        else {
+        else if (action == 1) {
             string newPart = "PART_" + to_string(rand() % 9999);
             waiting.push_back(newPart);
             cout << stationName << ": added new part " << newPart << " to waiting." << endl;
+        }
+        else {
+            cout << stationName << ": no change this interval." << endl;
         }
 
         if (waiting.size() > 20) {
