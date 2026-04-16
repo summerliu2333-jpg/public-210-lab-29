@@ -8,7 +8,8 @@ Test Objectives:
     Test if the total number of parts is loaded correctly.
     Test if parts move from waiting to completed.
     Test if new parts are added to the waiting list.
-    Test if backlog warnings are added when the waiting list becomes too large.
+    Test if a station can have no change during an interval.
+    Test if idle events and backlog warnings can be stored in the logs list.
     Test if the final waiting, completed, and log counts are displayed for each station.
 
 Driver Program:
@@ -18,6 +19,8 @@ Driver Program:
 #include <array>
 #include <list>
 #include <string>
+#include <cstdlib>
+#include <ctime>
 using namespace std;
 
 map<string, array<list<string>, 3>> productionMap;
@@ -27,6 +30,8 @@ void simulateProductionChanges(map<string, array<list<string>, 3>>& lineMap, int
 void printSummary();
 
 int main() {
+    srand(time(0));
+
     bool result = loadFile();
 
     if (result) {
@@ -71,13 +76,18 @@ void simulateProductionChanges(map<string, array<list<string>, 3>>& lineMap, int
         auto& completed = entry.second[1];
         auto& logs = entry.second[2];
 
-        if (!waiting.empty()) {
+        int action = rand() % 3;
+
+        if (action == 0 && !waiting.empty()) {
             string part = waiting.front();
             waiting.pop_front();
             completed.push_back(part);
         }
-        else {
+        else if (action == 1) {
             waiting.push_back("TEST_PART");
+        }
+        else {
+            logs.push_back("Idle event");
         }
 
         if (waiting.size() > 20) {

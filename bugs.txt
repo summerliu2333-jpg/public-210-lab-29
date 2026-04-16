@@ -1,0 +1,32 @@
+Bug: The file opened successfully, but no part data was being loaded.
+   Fix: Changed the input loop to read both station and part values.
+
+Bug: The loaded part count was always 0.
+   Fix: Added count++ inside the while loop when reading the file.
+
+Bug: The program continued running even when the file could not be opened.
+   Fix: Added a check in main() to stop execution if loadFile() returned false.
+
+Bug: Dummy startup data was used instead of actual file input.
+   Fix: Removed the dummy part initialization and used parts_data.txt as the main data source.
+
+Bug: The random seed was placed inside a function, which caused poor random behavior.
+   Fix: Moved srand(time(0)) to the beginning of main().
+
+Bug: Backlog warnings triggered too often at the beginning of the simulation.
+   Fix: Increased the backlog threshold to waiting.size() > 20.
+
+Bug: The simulation output was hard to follow without interval labels.
+   Fix: Added interval headers before each simulation cycle.
+
+Bug: The alpha version always forced each station to change state every interval.
+   Fix: Added an idle event in beta so a station can have no production change during an interval.
+
+Bug: Idle events were shown on the screen but were not stored in the logs list.
+   Fix: Added idle event messages to the logs list during beta2.
+
+Bug: It was difficult to verify whether the log system was recording different event types.
+   Fix: Updated testing.txt to include idle events and backlog warnings in the logs list.
+
+Bug: The final summary did not reflect all system events because idle events were not included in the logs.
+   Fix: Added idle event messages to the logs list so the final summary showed more accurate log totals.
