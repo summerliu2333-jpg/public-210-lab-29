@@ -1,11 +1,14 @@
 Unit Testing Description:
-I will test the loadFile() function. This function opens a data file, reads workstation and part data, and returns true if it works.
+I will test the loadFile() function and the simulateProductionChanges() function. These functions read workstation and part data from a file and update the production system during each simulation interval.
 
 Test Objectives:
     Test if the file opens correctly.
     Test if the function returns true or false properly.
     Test if workstation and part data are read into the map.
     Test if the total number of parts is loaded correctly.
+    Test if parts move from waiting to completed.
+    Test if new parts are added to the waiting list.
+    Test if backlog warnings are added when the waiting list becomes too large.
 
 Driver Program:
 #include <iostream>
@@ -19,6 +22,7 @@ using namespace std;
 map<string, array<list<string>, 3>> productionMap;
 
 bool loadFile();
+void simulateProductionChanges(map<string, array<list<string>, 3>>& lineMap, int currentInterval);
 
 int main() {
     bool result = loadFile();
@@ -29,7 +33,10 @@ int main() {
     }
     else {
         cout << "Test failed" << endl;
+        return 1;
     }
+
+    simulateProductionChanges(productionMap, 1);
 
     return 0;
 }
@@ -52,4 +59,29 @@ bool loadFile() {
 
     cout << "Parts loaded: " << count << endl;
     return true;
+}
+
+void simulateProductionChanges(map<string, array<list<string>, 3>>& lineMap, int currentInterval) {
+    for (auto& entry : lineMap) {
+        string stationName = entry.first;
+        auto& waiting = entry.second[0];
+        auto& completed = entry.second[1];
+        auto& logs = entry.second[2];
+
+        if (!waiting.empty()) {
+            string part = waiting.front();
+            waiting.pop_front();
+            completed.push_back(part);
+        }
+        else {
+            waiting.push_back("TEST_PART");
+        }
+
+        if (waiting.size() > 20) {
+            string message = "Interval " + to_string(currentInterval) +
+                             ": backlog warning at " + stationName;
+            logs.push_back(message);
+            cout << message << endl;
+        }
+    }
 }

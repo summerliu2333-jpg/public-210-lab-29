@@ -39,7 +39,6 @@
 using namespace std;
 
 map<string, array<list<string>, 3>> productionMap;
-const string TEST_STATION = "ASSEMBLY_STATION_01";
 
 void simulateProductionChanges(map<string, array<list<string>, 3>>& lineMap, int currentInterval);
 bool loadFile();
@@ -106,6 +105,13 @@ void simulateProductionChanges(map<string, array<list<string>, 3>>& lineMap, int
             string newPart = "PART_" + to_string(rand() % 9999);
             waiting.push_back(newPart);
             cout << stationName << ": added new part " << newPart << " to waiting." << endl;
+        }
+
+        if (waiting.size() > 20) {
+            string message = "Interval " + to_string(currentInterval) +
+                             ": backlog warning at " + stationName;
+            logs.push_back(message);
+            cout << message << endl;
         }
     }
 }
