@@ -1,0 +1,10 @@
+Project Overview:
+My project is a time-driven discrete event simulation for a factory production line. It tracks parts across workstations over 25 time cycles and shows how queues and production change over time.
+
+Implementation:
+I will use a std::map<std::string, std::array<std::list<std::string>, 3>> as the main data structure. The map key is a workstation name. The array holds three lists: waiting parts, completed parts, and event logs.
+
+One map entry represents a single station. The three lists track parts waiting to be processed, parts that finished processing, and system logs for that station.
+
+Simulated events:
+During each time interval, parts may move from the waiting list to the completed list. If the waiting list is too long, a log entry is added. The program prints state changes after each interval.
