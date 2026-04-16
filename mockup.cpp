@@ -28,9 +28,30 @@
 
 
 #include<iostream>
+#include <map>
+#include <array>
+#include <list>
+#include <string>
+#include <cstdlib>
+#include <ctime>
 
 using namespace std;
 
+map<string, array<list<string>, 3>> productionMap;
+const string TEST_STATION = "ASSEMBLY_STATION_01";
+
+void simulateProductionChanges(map<string, array<list<string>, 3>>& lineMap, int currentInterval);
+
 int main() {
+
+    productionMap[TEST_STATION][0].push_back("INITIAL_PART_001");
+
+    for (int i = 1; i <= 25; i++) {
+        simulateProductionChanges(productionMap, i);
+    }
+
     return 0;
+}
+
+void simulateProductionChanges(map<string, array<list<string>, 3>>& lineMap, int currentInterval) {
 }
