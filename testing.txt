@@ -1,27 +1,55 @@
 Unit Testing Description:
-I will test the loadFile() function. This function opens a data file and returns true if it works.
+I will test the loadFile() function. This function opens a data file, reads workstation and part data, and returns true if it works.
 
 Test Objectives:
     Test if the file opens correctly.
     Test if the function returns true or false properly.
+    Test if workstation and part data are read into the map.
+    Test if the total number of parts is loaded correctly.
 
 Driver Program:
 #include <iostream>
 #include <fstream>
+#include <map>
+#include <array>
+#include <list>
+#include <string>
 using namespace std;
+
+map<string, array<list<string>, 3>> productionMap;
 
 bool loadFile();
 
 int main() {
     bool result = loadFile();
-    if (result)
-        cout << "Test passed";
-    else
-        cout << "Test failed";
+
+    if (result) {
+        cout << "Test passed" << endl;
+        cout << "Stations loaded: " << productionMap.size() << endl;
+    }
+    else {
+        cout << "Test failed" << endl;
+    }
+
     return 0;
 }
 
 bool loadFile() {
     ifstream file("parts_data.txt");
-    return file.is_open();
+
+    if (!file.is_open()) {
+        return false;
+    }
+
+    string station;
+    string part;
+    int count = 0;
+
+    while (file >> station >> part) {
+        productionMap[station][0].push_back(part);
+        count++;
+    }
+
+    cout << "Parts loaded: " << count << endl;
+    return true;
 }
