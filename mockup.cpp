@@ -39,43 +39,57 @@
 using namespace std;
 
 map<string, array<list<string>, 3>> productionMap;
-const string TEST_STATION = "ASSEMBLY_STATION_01";
 
 void simulateProductionChanges(map<string, array<list<string>, 3>>& lineMap, int currentInterval);
-bool loadFile(); // NEW
+bool loadFile();
+void printSummary();
 
 int main() {
     srand(time(0));
     cout << "--- Alpha Release ---" << endl;
 
-    loadFile(); 
-
-    productionMap[TEST_STATION][0].push_back("INITIAL_PART_001");
-
-    cout << "--- Initial State ---" << endl;
-    cout << "Added dummy part to " << TEST_STATION << endl << endl;
+    if (!loadFile()) {
+        cerr << "Failed to load parts data." << endl;
+        return 1;
+    }
 
     for (int i = 1; i <= 25; i++) {
         simulateProductionChanges(productionMap, i);
     }
 
-    cout << "\n--- Mockup Complete ---" << endl;
+    printSummary();
+
+    cout << "\n--- Alpha Complete ---" << endl;
 
     return 0;
 }
 
 bool loadFile() {
     ifstream file("parts_data.txt");
-    if (file) {
-        cout << "File opened successfully" << endl;
-        return true;
-    } else {
+
+    if (!file) {
         cout << "File not found" << endl;
         return false;
     }
+
+    string station, part;
+    int count = 0;
+
+    while (file >> station >> part) {
+        productionMap[station][0].push_back(part);
+        count++;
+    }
+
+    cout << "File loaded successfully" << endl;
+    cout << "Loaded " << count << " parts into "
+         << productionMap.size() << " stations." << endl;
+
+    return true;
 }
 
 void simulateProductionChanges(map<string, array<list<string>, 3>>& lineMap, int currentInterval) {
+    cout << "\n--- Interval " << currentInterval << " ---" << endl;
+
     for (auto& entry : lineMap) {
         string stationName = entry.first;
         auto& waiting = entry.second[0];
@@ -88,11 +102,35 @@ void simulateProductionChanges(map<string, array<list<string>, 3>>& lineMap, int
             string part = waiting.front();
             waiting.pop_front();
             completed.push_back(part);
-            cout << "Interval " << currentInterval << ": Moved " << part << " to completed." << endl;
-        } else {
+            cout << stationName << ": moved " << part << " from waiting to completed." << endl;
+        }
+        else {
             string newPart = "PART_" + to_string(rand() % 9999);
             waiting.push_back(newPart);
-            cout << "Interval " << currentInterval << ": Added new part " << newPart << endl;
+            cout << stationName << ": added new part " << newPart << " to waiting." << endl;
         }
+
+        if (waiting.size() > 20) {
+            string message = "Interval " + to_string(currentInterval) +
+                             ": backlog warning at " + stationName;
+            logs.push_back(message);
+            cout << message << endl;
+        }
+    }
+}
+
+void printSummary() {
+    cout << "\n--- Final Summary ---" << endl;
+
+    for (auto& entry : productionMap) {
+        string stationName = entry.first;
+        auto& waiting = entry.second[0];
+        auto& completed = entry.second[1];
+        auto& logs = entry.second[2];
+
+        cout << stationName << ":" << endl;
+        cout << "  Waiting: " << waiting.size() << endl;
+        cout << "  Completed: " << completed.size() << endl;
+        cout << "  Logs: " << logs.size() << endl;
     }
 }
